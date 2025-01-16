@@ -35,3 +35,4 @@ extras/
 /dist/
 
 docs/venv
+.envrc
