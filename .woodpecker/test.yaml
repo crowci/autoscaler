@@ -1,5 +1,8 @@
 when:
   - event: pull_request
+  - event: push
+    branch:
+      exclude: ${CI_REPO_DEFAULT_BRANCH}
 
 variables:
   - &golang_image 'golang:1.23'
@@ -23,7 +26,9 @@ steps:
     image: *golang_image
     depends_on: []
     commands:
-      - make lint
+      # install just FIXME: 'apt install -y just' from Debian >= 13
+      - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/bin/
+      - just lint
     when: *when
 
   lint-editorconfig:
@@ -34,5 +39,7 @@ steps:
     image: *golang_image
     depends_on: []
     commands:
-      - make test
+      # install just FIXME: 'apt install -y just' from Debian >= 13
+      - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/bin/
+      - just test
     when: *when
