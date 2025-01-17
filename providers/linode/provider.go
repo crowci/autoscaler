@@ -8,12 +8,12 @@ import (
 	"net/http"
 	"text/template"
 
+	"github.com/crowci/autoscaler/config"
+	"github.com/crowci/autoscaler/engine"
 	"github.com/linode/linodego"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/oauth2"
 
-	"go.woodpecker-ci.org/autoscaler/config"
-	"go.woodpecker-ci.org/autoscaler/engine"
 	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
 )
 

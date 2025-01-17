@@ -2,7 +2,7 @@
 CGO_ENABLED := "1"
 TARGETOS := `go env GOOS`
 TARGETARCH := `go env GOARCH`
-LDFLAGS := '-s -w -extldflags "-static"'
+LDFLAGS := "-s -w -extldflags '-static'"
 GO_PACKAGES := `go list ./... | grep -v /vendor/ | tr '\n' ' '`
 
 ### recipes
@@ -16,7 +16,7 @@ vendor:
   go mod vendor
 
 build: vendor
-	CGO_ENABLED={{CGO_ENABLED}} GOOS={{TARGETOS}} GOARCH={{TARGETARCH}} go build -ldflags '{{LDFLAGS}}' -o dist/crow-autoscaler go.woodpecker-ci.org/autoscaler/cmd/woodpecker-autoscaler
+	CGO_ENABLED=0 GOOS={{TARGETOS}} GOARCH={{TARGETARCH}} go build -ldflags "{{LDFLAGS}}" -o dist/crow-autoscaler github.com/crowci/autoscaler/cmd/crow-autoscaler
 
 test: vendor
   go test -race -cover -coverprofile autoscaler-coverage.out -timeout 30s {{GO_PACKAGES}}

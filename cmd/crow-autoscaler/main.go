@@ -6,16 +6,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/crowci/autoscaler/config"
+	"github.com/crowci/autoscaler/engine"
+	"github.com/crowci/autoscaler/providers/aws"
+	"github.com/crowci/autoscaler/providers/hetznercloud"
+	"github.com/crowci/autoscaler/server"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
-
-	"go.woodpecker-ci.org/autoscaler/config"
-	"go.woodpecker-ci.org/autoscaler/engine"
-	"go.woodpecker-ci.org/autoscaler/providers/aws"
-	"go.woodpecker-ci.org/autoscaler/providers/hetznercloud"
-	"go.woodpecker-ci.org/autoscaler/server"
 )
 
 func setupProvider(ctx *cli.Context, config *config.Config) (engine.Provider, error) {

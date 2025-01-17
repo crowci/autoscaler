@@ -5,13 +5,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/crowci/autoscaler/config"
+	mocks_engine "github.com/crowci/autoscaler/engine/mocks"
+	mocks_server "github.com/crowci/autoscaler/server/mocks"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"go.woodpecker-ci.org/autoscaler/config"
-	mocks_engine "go.woodpecker-ci.org/autoscaler/engine/mocks"
-	mocks_server "go.woodpecker-ci.org/autoscaler/server/mocks"
 	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
 )
 

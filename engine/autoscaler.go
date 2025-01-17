@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/crowci/autoscaler/config"
+	"github.com/crowci/autoscaler/server"
 	"github.com/rs/zerolog/log"
 
-	"go.woodpecker-ci.org/autoscaler/config"
-	"go.woodpecker-ci.org/autoscaler/server"
 	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
 )
 

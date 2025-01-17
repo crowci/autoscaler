@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"text/template"
 
-	"go.woodpecker-ci.org/autoscaler/config"
+	"github.com/crowci/autoscaler/config"
+
 	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
 )
 

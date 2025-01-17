@@ -1,4 +1,4 @@
-module go.woodpecker-ci.org/autoscaler
+module github.com/crowci/autoscaler
 
 go 1.22.0
 

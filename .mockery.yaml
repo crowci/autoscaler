@@ -3,12 +3,12 @@ disable-version-string: true
 outpkg: 'mocks'
 dir: '{{.InterfaceDir}}/mocks'
 packages:
-  go.woodpecker-ci.org/autoscaler/providers/hetznercloud/hcapi:
+  github.com/crowci/autoscaler/providers/hetznercloud/hcapi:
     config:
       recursive: true
-  go.woodpecker-ci.org/autoscaler/engine:
+  github.com/crowci/autoscaler/engine:
     config:
       recursive: true
-  go.woodpecker-ci.org/autoscaler/server:
+  github.com/crowci/autoscaler/server:
     config:
       recursive: true

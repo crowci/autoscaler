@@ -7,13 +7,13 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/crowci/autoscaler/config"
+	"github.com/crowci/autoscaler/engine"
+	"github.com/crowci/autoscaler/providers/hetznercloud/hcapi"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/exp/maps"
 
-	"go.woodpecker-ci.org/autoscaler/config"
-	"go.woodpecker-ci.org/autoscaler/engine"
-	"go.woodpecker-ci.org/autoscaler/providers/hetznercloud/hcapi"
 	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
 )
 

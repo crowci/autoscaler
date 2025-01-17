@@ -4,9 +4,9 @@ import (
 	"testing"
 	"text/template"
 
+	"github.com/crowci/autoscaler/config"
 	"github.com/stretchr/testify/assert"
 
-	"go.woodpecker-ci.org/autoscaler/config"
 	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
 )
 

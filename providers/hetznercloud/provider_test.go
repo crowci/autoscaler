@@ -5,12 +5,12 @@ import (
 	"testing"
 	"text/template"
 
+	"github.com/crowci/autoscaler/config"
+	"github.com/crowci/autoscaler/providers/hetznercloud/hcapi/mocks"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"go.woodpecker-ci.org/autoscaler/config"
-	"go.woodpecker-ci.org/autoscaler/providers/hetznercloud/hcapi/mocks"
 	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
 )
 

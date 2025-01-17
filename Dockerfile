@@ -1,16 +1,12 @@
-FROM --platform=$BUILDPLATFORM golang:1.23 AS build
+FROM --platform=$BUILDPLATFORM golang:1.23-alpine3.21 AS build
 
-RUN groupadd -g 1000 crow && \
-  useradd -u 1000 -g 1000 crow && \
-  mkdir -p /etc/crow && \
-  chown -R crow:crow /etc/crow
+RUN addgroup -g 1000 -S crow && \
+  adduser -u 1000 -G crow -S crow
 
 WORKDIR /src
 COPY . .
 ARG TARGETOS TARGETARCH
-# install just FIXME: 'apt install -y just' from Debian >= 13
-# hadolint ignore=DL4006
-RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/bin/
+RUN apk add --no-cache -q just curl bash git gcc musl-dev
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg \
     just build
@@ -20,8 +16,11 @@ ENV GODEBUG=netdns=go
 
 # copy certs from build image
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
-# copy agent binary
-COPY --from=build /src/dist/crow-autoscaler /bin/
+# copy binary
+COPY --from=build /src/dist/crow-autoscale[r] /bin/crow-autoscaler
+
+COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /etc/group /etc/group
 
 USER crow
 
