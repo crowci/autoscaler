@@ -16,7 +16,7 @@ import (
 	"github.com/crowci/autoscaler/config"
 	"github.com/crowci/autoscaler/engine"
 	crow "github.com/crowci/crow/v3/crow-go/crow"
-	zerolog "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 )
 
@@ -143,13 +143,12 @@ func (p *Provider) DeployAgent(ctx context.Context, agent *crow.Agent) error {
 	runInstancesInput.UserData = aws.String(b64.StdEncoding.EncodeToString([]byte(userData)))
 	result, err := p.client.RunInstances(ctx, &runInstancesInput)
 	if err != nil {
-		return fmt.Errorf("%s: Server.Create: %w", p.name, err)
+		return fmt.Errorf("%s: RunInstances: %w", p.name, err)
 	}
 
 	// Wait until instance is available. Sometimes it can take a second or two for the tag based
 	// filter to show the instance we just created in AWS
-	zerolog.Debug().Msgf("waiting for instance %s", *result.Instances[0].InstanceId)
-
+	log.Debug().Msgf("waiting for instance %s", *result.Instances[0].InstanceId)
 	for range 5 {
 		agents, err := p.ListDeployedAgentNames(ctx)
 		if err != nil {
@@ -162,8 +161,7 @@ func (p *Provider) DeployAgent(ctx context.Context, agent *crow.Agent) error {
 			}
 		}
 
-		zerolog.Debug().Msgf("Created agent not found in list yet")
-
+		log.Debug().Msgf("created agent not found in list yet")
 		time.Sleep(1 * time.Second)
 	}
 
@@ -204,7 +202,7 @@ func (p *Provider) RemoveAgent(ctx context.Context, agent *crow.Agent) error {
 }
 
 func (p *Provider) ListDeployedAgentNames(ctx context.Context) ([]string, error) {
-	zerolog.Debug().Msgf("List deployed agent names")
+	log.Debug().Msgf("list deployed agent names")
 
 	var names []string
 	instances, err := p.client.DescribeInstances(ctx, &ec2.DescribeInstancesInput{
@@ -226,7 +224,7 @@ func (p *Provider) ListDeployedAgentNames(ctx context.Context) ([]string, error)
 			}
 			for _, tag := range instance.Tags {
 				if *tag.Key == "Name" {
-					zerolog.Debug().Msgf("Found agent %s", *tag.Value)
+					log.Debug().Msgf("found agent %s", *tag.Value)
 					names = append(names, *tag.Value)
 				}
 			}

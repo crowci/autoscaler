@@ -10,6 +10,7 @@ import (
 	"github.com/crowci/autoscaler/engine"
 	"github.com/crowci/autoscaler/providers/aws"
 	"github.com/crowci/autoscaler/providers/hetznercloud"
+	"github.com/crowci/autoscaler/providers/vultr"
 	"github.com/crowci/autoscaler/server"
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/rs/zerolog"
@@ -27,6 +28,8 @@ func setupProvider(ctx *cli.Context, config *config.Config) (engine.Provider, er
 	// Enable it again when the issue is fixed.
 	// case "linode":
 	// 	return linode.New(ctx, config)
+	case "vultr":
+		return vultr.New(ctx, config)
 	case "":
 		return nil, fmt.Errorf("please select a provider")
 	}
@@ -35,7 +38,7 @@ func setupProvider(ctx *cli.Context, config *config.Config) (engine.Provider, er
 }
 
 func run(ctx *cli.Context) error {
-	log.Log().Msgf("Starting autoscaler with log-level=%s", zerolog.GlobalLevel().String())
+	log.Log().Msgf("starting autoscaler with log-level=%s", zerolog.GlobalLevel().String())
 
 	client, err := server.NewClient(ctx)
 	if err != nil {
@@ -92,7 +95,7 @@ func run(ctx *cli.Context) error {
 		case <-time.After(reconciliationInterval):
 			err := autoscaler.Reconcile(ctx.Context)
 			if err != nil {
-				log.Error().Err(err).Msg("Reconciliation failed")
+				log.Error().Err(err).Msg("reconciliation failed")
 			}
 		}
 	}
@@ -109,7 +112,7 @@ func main() {
 				logLevelFlag := ctx.String("log-level")
 				lvl, err := zerolog.ParseLevel(logLevelFlag)
 				if err != nil {
-					log.Warn().Msgf("LogLevel = %s is unknown", logLevelFlag)
+					log.Warn().Msgf("log-level = %s is unknown", logLevelFlag)
 				}
 				zerolog.SetGlobalLevel(lvl)
 			}
@@ -133,6 +136,8 @@ func main() {
 
 	// Register aws flags
 	app.Flags = append(app.Flags, aws.DriverFlags...)
+	// Register vultr flags
+	app.Flags = append(app.Flags, vultr.DriverFlags...)
 
 	if err := app.Run(os.Args); err != nil {
 		log.Error().Err(err).Msg("got error while try to run autoscaler")

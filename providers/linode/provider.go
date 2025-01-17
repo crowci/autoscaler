@@ -146,7 +146,7 @@ func (d *Provider) DeployAgent(ctx context.Context, agent *crow.Agent) error {
 		Metadata:        metadata,
 	})
 	if err != nil {
-		return fmt.Errorf("%s: ServerCreate: %w", d.name, err)
+		return fmt.Errorf("%s: CreateInstance: %w", d.name, err)
 	}
 
 	return nil
