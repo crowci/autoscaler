@@ -55,3 +55,22 @@ steps:
         from_secret: GITHUB_PKGS_TOKEN
     when:
       event: tag
+
+  changelog:
+    image: docker.io/thegeeklab/git-sv:1.0.10
+    commands:
+      - git sv current-version
+      - git sv release-notes -t ${CI_COMMIT_TAG:-dev} -o CHANGELOG.md
+      - cat CHANGELOG.md
+
+  create_release:
+    image: 'alpine:3.21'
+    environment:
+      GITHUB_TOKEN:
+        from_secret: ISSUE_TOKEN
+    commands:
+      - apk add -q --no-cache github-cli
+      - gh release create ${CI_COMMIT_TAG} --title "Crow CI Autoscaler ${CI_COMMIT_TAG}" --notes-file CHANGELOG.md
+    when:
+      event: [tag]
+      branch: ${CI_REPO_DEFAULT_BRANCH}
