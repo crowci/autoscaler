@@ -6,7 +6,6 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.33.0
 	github.com/aws/aws-sdk-go-v2/config v1.29.0
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.199.2
-	github.com/crowci/crow/v3 v3.0.0-20250119120118-f262ab5c0838
 	github.com/hetznercloud/hcloud-go/v2 v2.17.1
 	github.com/joho/godotenv v1.5.1
 	github.com/linode/linodego v1.46.0
@@ -33,6 +32,7 @@ require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.5 // indirect
+	github.com/crowci/crow/v3 v3.0.0-20250119162224-29f9ea7dc2b7 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/go-resty/resty/v2 v2.16.3 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect

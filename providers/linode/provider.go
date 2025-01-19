@@ -10,11 +10,10 @@ import (
 
 	"github.com/crowci/autoscaler/config"
 	"github.com/crowci/autoscaler/engine"
+	crow "github.com/crowci/crow/v3/crow-go/crow"
 	"github.com/linode/linodego"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/oauth2"
-
-	crow "github.com/crowci/crow/v3/crow-go/crow"
 )
 
 var (

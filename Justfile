@@ -12,6 +12,9 @@ lint:
     @echo "Running golangci-lint"
     golangci-lint run --timeout 10m
 
+fmt:
+    gci write --skip-vendor --skip-generated -s standard -s default --custom-order .
+
 vendor:
   go mod vendor
 
@@ -25,3 +28,6 @@ test: vendor
 image-autoscaler:
     echo $GITHUB_PKGS_TOKEN | docker login ghcr.io -u crowci-bot --password-stdin
     docker buildx build --platform $PLATFORMS -t ghcr.io/crowci/crow-autoscaler:dev -f Dockerfile --push .
+
+generate:
+	mockery

@@ -5,9 +5,8 @@ import (
 	"text/template"
 
 	"github.com/crowci/autoscaler/config"
-	"github.com/stretchr/testify/assert"
-
 	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/stretchr/testify/assert"
 )
 
 var testUserDataStr = `

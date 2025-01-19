@@ -91,7 +91,7 @@ lint: install-tools
     @echo "Running golangci-lint"
     golangci-lint run --timeout 10m
     @echo "Running zerolog linter"
-    lint github.com/crowci/autoscaler/cmd/woodpecker-autoscaler
+    lint github.com/crowci/autoscaler/cmd/crow-autoscaler
 
 test-autoscaler: ## Test autoscaler code
 	go test -race -cover -coverprofile autoscaler-coverage.out -timeout 30s ${GO_PACKAGES}
@@ -106,6 +106,6 @@ generate:
 ##@ Build
 
 build:
-	CGO_ENABLED=${CGO_ENABLED} GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags '${LDFLAGS}' -o dist/woodpecker-autoscaler github.com/crowci/autoscaler/cmd/woodpecker-autoscaler
+	CGO_ENABLED=${CGO_ENABLED} GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags '${LDFLAGS}' -o dist/crow-autoscaler github.com/crowci/autoscaler/cmd/woodpecker-autoscaler
 
 endif

@@ -10,9 +10,8 @@ import (
 
 	"github.com/crowci/autoscaler/config"
 	"github.com/crowci/autoscaler/server"
-	"github.com/rs/zerolog/log"
-
 	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/rs/zerolog/log"
 )
 
 type Autoscaler struct {
