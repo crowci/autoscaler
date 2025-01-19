@@ -16,6 +16,7 @@ fmt:
     gci write --skip-vendor --skip-generated -s standard -s default --custom-order .
 
 vendor:
+  go mod tidy
   go mod vendor
 
 build: vendor
@@ -30,4 +31,5 @@ image-autoscaler:
     docker buildx build --platform $PLATFORMS -t ghcr.io/crowci/crow-autoscaler:dev -f Dockerfile --push .
 
 generate:
-	mockery
+	cd server && mockery --all
+	cd providers && mockery --all

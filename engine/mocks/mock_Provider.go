@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/crowci/crow/v3/crow-go/crow"
 
 	mock "github.com/stretchr/testify/mock"
 )

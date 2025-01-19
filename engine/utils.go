@@ -1,6 +1,6 @@
 package engine
 
-import crow "github.com/crowci/crow/v3/crow-go/crow"
+import "github.com/crowci/crow/v3/crow-go/crow"
 
 func countTasksByLabel(jobs []crow.Task, labelKey, labelValue string) int {
 	count := 0

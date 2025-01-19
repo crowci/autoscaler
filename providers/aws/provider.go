@@ -15,7 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/crowci/autoscaler/config"
 	"github.com/crowci/autoscaler/engine"
-	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/crowci/crow/v3/crow-go/crow"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 )

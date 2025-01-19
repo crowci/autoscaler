@@ -5,7 +5,7 @@ import (
 	"text/template"
 
 	"github.com/crowci/autoscaler/config"
-	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/crowci/crow/v3/crow-go/crow"
 	"github.com/stretchr/testify/assert"
 )
 

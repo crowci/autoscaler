@@ -10,7 +10,7 @@ import (
 
 	"github.com/crowci/autoscaler/config"
 	"github.com/crowci/autoscaler/server"
-	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/crowci/crow/v3/crow-go/crow"
 	"github.com/rs/zerolog/log"
 )
 

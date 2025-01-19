@@ -10,7 +10,7 @@ import (
 	"github.com/crowci/autoscaler/config"
 	"github.com/crowci/autoscaler/engine"
 	"github.com/crowci/autoscaler/providers/hetznercloud/hcapi"
-	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/crowci/crow/v3/crow-go/crow"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/exp/maps"

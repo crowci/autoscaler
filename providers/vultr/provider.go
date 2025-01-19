@@ -11,7 +11,7 @@ import (
 
 	"github.com/crowci/autoscaler/config"
 	"github.com/crowci/autoscaler/engine"
-	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/crowci/crow/v3/crow-go/crow"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 	"github.com/vultr/govultr/v3"

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/crowci/crow/v3/crow-go/crow"
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 	"golang.org/x/net/proxy"

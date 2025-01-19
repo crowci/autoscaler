@@ -15,6 +15,7 @@ require (
 	github.com/scaleway/scaleway-sdk-go v1.0.0-beta.30
 	github.com/stretchr/testify v1.10.0
 	github.com/urfave/cli/v2 v2.27.5
+	github.com/vultr/govultr/v3 v3.14.1
 	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8
 	golang.org/x/net v0.34.0
 	golang.org/x/oauth2 v0.25.0
@@ -51,7 +52,6 @@ require (
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	github.com/vultr/govultr/v3 v3.14.1 // indirect
 	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect

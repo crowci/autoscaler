@@ -8,7 +8,7 @@ import (
 	"github.com/crowci/autoscaler/config"
 	mocks_engine "github.com/crowci/autoscaler/engine/mocks"
 	mocks_server "github.com/crowci/autoscaler/server/mocks"
-	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/crowci/crow/v3/crow-go/crow"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

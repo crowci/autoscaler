@@ -7,7 +7,7 @@ import (
 
 	"github.com/crowci/autoscaler/config"
 	"github.com/crowci/autoscaler/providers/hetznercloud/hcapi/mocks"
-	crow "github.com/crowci/crow/v3/crow-go/crow"
+	"github.com/crowci/crow/v3/crow-go/crow"
 	"github.com/hetznercloud/hcloud-go/v2/hcloud"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
