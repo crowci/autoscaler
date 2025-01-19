@@ -5,7 +5,7 @@ when:
       exclude: ${CI_REPO_DEFAULT_BRANCH}
 
 variables:
-  - &golang_image 'golang:1.23'
+  - &golang_image 'golang:1.23-alpine3.21'
   - &when
     - path: &when_path # related config files
         - '.woodpecker/test.yml'
@@ -26,8 +26,7 @@ steps:
     image: *golang_image
     depends_on: []
     commands:
-      # install just FIXME: 'apt install -y just' from Debian >= 13
-      - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/bin/
+      - apk add --no-cache -q just
       - just lint
     when: *when
 
@@ -39,7 +38,6 @@ steps:
     image: *golang_image
     depends_on: []
     commands:
-      # install just FIXME: 'apt install -y just' from Debian >= 13
-      - curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /usr/bin/
+      - apk add --no-cache -q just
       - just test
     when: *when
