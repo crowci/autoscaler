@@ -9,7 +9,7 @@ when:
   branch: ${CI_REPO_DEFAULT_BRANCH}
 
 steps:
-  - name: 'Upcoming Changelog'
+  - name: 'Upcoming changelog'
     environment:
       GITHUB_TOKEN:
         from_secret: ISSUE_TOKEN
