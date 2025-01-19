@@ -14,7 +14,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"golang.org/x/exp/maps"
 
-	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
+	crow "github.com/crowci/crow/v3/crow-go/crow"
 )
 
 var (
@@ -87,7 +87,7 @@ func New(c *cli.Context, config *config.Config) (engine.Provider, error) {
 	return d, nil
 }
 
-func (d *Provider) DeployAgent(ctx context.Context, agent *woodpecker.Agent) error {
+func (d *Provider) DeployAgent(ctx context.Context, agent *crow.Agent) error {
 	userdataString, err := engine.RenderUserDataTemplate(d.config, agent, d.userData)
 	if err != nil {
 		return fmt.Errorf("%s: RenderUserDataTemplate: %w", d.name, err)
@@ -169,7 +169,7 @@ func (d *Provider) DeployAgent(ctx context.Context, agent *woodpecker.Agent) err
 	return nil
 }
 
-func (d *Provider) getAgent(ctx context.Context, agent *woodpecker.Agent) (*hcloud.Server, error) {
+func (d *Provider) getAgent(ctx context.Context, agent *crow.Agent) (*hcloud.Server, error) {
 	server, _, err := d.client.Server().GetByName(ctx, agent.Name)
 	if err != nil {
 		return nil, fmt.Errorf("%s: Server.GetByName %w", d.name, err)
@@ -178,7 +178,7 @@ func (d *Provider) getAgent(ctx context.Context, agent *woodpecker.Agent) (*hclo
 	return server, nil
 }
 
-func (d *Provider) RemoveAgent(ctx context.Context, agent *woodpecker.Agent) error {
+func (d *Provider) RemoveAgent(ctx context.Context, agent *crow.Agent) error {
 	server, err := d.getAgent(ctx, agent)
 	if err != nil {
 		return fmt.Errorf("%s: getAgent %w", d.name, err)

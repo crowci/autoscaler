@@ -14,7 +14,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"golang.org/x/oauth2"
 
-	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
+	crow "github.com/crowci/crow/v3/crow-go/crow"
 )
 
 var (
@@ -46,9 +46,8 @@ apt-get update && apt-get install -y docker-ce docker-compose-plugin
 systemctl enable --now docker
 
 cat > /root/docker-compose.yml <<'EOS'
-version: '3'
 services:
-  woodpecker-agent:
+  crow-agent:
     image: {{ .Image }}
     restart: always
     volumes:
@@ -115,7 +114,7 @@ func New(c *cli.Context, config *config.Config) (engine.Provider, error) {
 	return d, nil
 }
 
-func (d *Provider) DeployAgent(ctx context.Context, agent *woodpecker.Agent) error {
+func (d *Provider) DeployAgent(ctx context.Context, agent *crow.Agent) error {
 	userdataString, err := engine.RenderUserDataTemplate(d.config, agent, d.userData)
 	if err != nil {
 		return fmt.Errorf("%s: RenderUserDataTemplate: %w", d.name, err)
@@ -154,7 +153,7 @@ func (d *Provider) DeployAgent(ctx context.Context, agent *woodpecker.Agent) err
 	return nil
 }
 
-func (d *Provider) getAgent(ctx context.Context, agent *woodpecker.Agent) (*linodego.Instance, error) {
+func (d *Provider) getAgent(ctx context.Context, agent *crow.Agent) (*linodego.Instance, error) {
 	f := linodego.Filter{}
 	f.AddField(linodego.Eq, "label", agent.Name)
 	fStr, err := f.MarshalJSON()
@@ -170,7 +169,7 @@ func (d *Provider) getAgent(ctx context.Context, agent *woodpecker.Agent) (*lino
 	return &server[0], nil
 }
 
-func (d *Provider) RemoveAgent(ctx context.Context, agent *woodpecker.Agent) error {
+func (d *Provider) RemoveAgent(ctx context.Context, agent *crow.Agent) error {
 	server, err := d.getAgent(ctx, agent)
 	if err != nil {
 		return fmt.Errorf("%s: getAgent %w", d.name, err)
@@ -223,7 +222,7 @@ func (d *Provider) setupKeypair(ctx context.Context) error {
 
 	// if the account has multiple keys configured try to
 	// use an existing key based on naming convention.
-	for _, name := range []string{"woodpecker", "id_rsa_woodpecker"} {
+	for _, name := range []string{"crow", "id_rsa_crow"} {
 		fingerprint, ok := index[name]
 		if !ok {
 			continue

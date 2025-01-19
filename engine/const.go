@@ -3,7 +3,7 @@ package engine
 import "fmt"
 
 var (
-	LabelPrefix = "wp.autoscaler/"
+	LabelPrefix = "crow.autoscaler/"
 	LabelPool   = fmt.Sprintf("%spool", LabelPrefix)
 	LabelImage  = fmt.Sprintf("%simage", LabelPrefix)
 	// editorconfig-checker-disable
@@ -36,9 +36,8 @@ write_files:
 - path: /root/docker-compose.yml
   content: |
     # docker-compose.yml
-    version: '3'
     services:
-      woodpecker-agent:
+      crow-agent:
         image: {{ .Image }}
         restart: always
         volumes:

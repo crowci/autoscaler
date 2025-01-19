@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
+	crow "github.com/crowci/crow/v3/crow-go/crow"
 )
 
 func TestDeployAgent(t *testing.T) {
@@ -65,7 +65,7 @@ func TestDeployAgent(t *testing.T) {
 				sshKeys:  tt.sshkeys,
 			}
 
-			agent := &woodpecker.Agent{}
+			agent := &crow.Agent{}
 			err := provider.DeployAgent(context.Background(), agent)
 			if tt.expectedError != "" {
 				assert.Error(t, err)

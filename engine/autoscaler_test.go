@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 
-	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
+	crow "github.com/crowci/crow/v3/crow-go/crow"
 )
 
 type MockClient struct {
@@ -20,25 +20,25 @@ type MockClient struct {
 	running       int
 	pending       int
 	waitingOnDeps int
-	woodpecker.Client
+	crow.Client
 }
 
-func (m MockClient) QueueInfo() (*woodpecker.Info, error) {
-	info := &woodpecker.Info{}
+func (m MockClient) QueueInfo() (*crow.Info, error) {
+	info := &crow.Info{}
 
 	info.Stats.Workers = m.workers
 	info.Stats.Running = m.running
 	info.Stats.Pending = m.pending
 	info.Stats.WaitingOnDeps = m.waitingOnDeps
 
-	info.Pending = []woodpecker.Task{
+	info.Pending = []crow.Task{
 		{
 			Labels: map[string]string{
 				"arch": "amd64",
 			},
 		},
 	}
-	info.Running = []woodpecker.Task{
+	info.Running = []crow.Task{
 		{
 			Labels: map[string]string{
 				"arch": "amd64",
@@ -95,7 +95,7 @@ func Test_calcAgents(t *testing.T) {
 		}, config: &config.Config{
 			WorkflowsPerAgent: 1,
 			MaxAgents:         2,
-		}, agents: []*woodpecker.Agent{
+		}, agents: []*crow.Agent{
 			{Name: "pool-1-agent-1234"},
 		}}
 
@@ -168,7 +168,7 @@ func Test_getQueueInfo(t *testing.T) {
 
 func Test_getPoolAgents(t *testing.T) {
 	autoscaler := Autoscaler{
-		agents: []*woodpecker.Agent{
+		agents: []*crow.Agent{
 			{ID: 1, Name: "pool-1-agent-1", NoSchedule: false},
 			{ID: 2, Name: "pool-1-agent-2", NoSchedule: true},
 			{ID: 3, Name: "pool-1-agent-3", NoSchedule: false},
@@ -197,7 +197,7 @@ func Test_createAgents(t *testing.T) {
 			},
 		}
 
-		client.On("AgentCreate", mock.Anything).Return(&woodpecker.Agent{Name: "pool-1-agent-1"}, nil)
+		client.On("AgentCreate", mock.Anything).Return(&crow.Agent{Name: "pool-1-agent-1"}, nil)
 		provider.On("DeployAgent", ctx, mock.Anything).Return(nil)
 
 		err := autoscaler.createAgents(ctx, 1)
@@ -211,7 +211,7 @@ func Test_createAgents(t *testing.T) {
 		autoscaler := Autoscaler{
 			client:   client,
 			provider: provider,
-			agents: []*woodpecker.Agent{
+			agents: []*crow.Agent{
 				{
 					ID:         1,
 					NoSchedule: true,
@@ -222,10 +222,10 @@ func Test_createAgents(t *testing.T) {
 			},
 		}
 
-		client.On("AgentUpdate", mock.MatchedBy(func(agent *woodpecker.Agent) bool {
+		client.On("AgentUpdate", mock.MatchedBy(func(agent *crow.Agent) bool {
 			return agent.ID == 1 && agent.NoSchedule == false
 		})).Return(nil, nil)
-		client.On("AgentCreate", mock.Anything).Return(&woodpecker.Agent{Name: "pool-1-agent-1"}, nil)
+		client.On("AgentCreate", mock.Anything).Return(&crow.Agent{Name: "pool-1-agent-1"}, nil)
 		provider.On("DeployAgent", ctx, mock.Anything).Return(nil)
 
 		err := autoscaler.createAgents(ctx, 2)
@@ -234,12 +234,12 @@ func Test_createAgents(t *testing.T) {
 }
 
 func Test_cleanupDanglingAgents(t *testing.T) {
-	t.Run("should remove agent that is only present on woodpecker (not provider)", func(t *testing.T) {
+	t.Run("should remove agent that is only present on crow (not provider)", func(t *testing.T) {
 		ctx := context.Background()
 		client := mocks_server.NewMockClient(t)
 		provider := mocks_engine.NewMockProvider(t)
 		autoscaler := Autoscaler{
-			agents: []*woodpecker.Agent{
+			agents: []*crow.Agent{
 				{ID: 1, Name: "pool-1-agent-1", NoSchedule: false},
 			},
 			provider: provider,
@@ -253,12 +253,12 @@ func Test_cleanupDanglingAgents(t *testing.T) {
 		assert.NoError(t, err)
 	})
 
-	t.Run("should remove agent that is only present on provider (not woodpecker)", func(t *testing.T) {
+	t.Run("should remove agent that is only present on provider (not crow)", func(t *testing.T) {
 		ctx := context.Background()
 		client := mocks_server.NewMockClient(t)
 		provider := mocks_engine.NewMockProvider(t)
 		autoscaler := Autoscaler{
-			agents: []*woodpecker.Agent{
+			agents: []*crow.Agent{
 				{ID: 1, Name: "pool-1-agent-1", NoSchedule: false},
 			},
 			provider: provider,
@@ -266,7 +266,7 @@ func Test_cleanupDanglingAgents(t *testing.T) {
 		}
 
 		provider.On("ListDeployedAgentNames", mock.Anything).Return([]string{"pool-1-agent-1", "pool-1-agent-2"}, nil)
-		provider.On("RemoveAgent", mock.Anything, mock.MatchedBy(func(agent *woodpecker.Agent) bool {
+		provider.On("RemoveAgent", mock.Anything, mock.MatchedBy(func(agent *crow.Agent) bool {
 			return agent.Name == "pool-1-agent-2"
 		})).Return(nil)
 
@@ -281,7 +281,7 @@ func Test_cleanupStaleAgents(t *testing.T) {
 		client := mocks_server.NewMockClient(t)
 		provider := mocks_engine.NewMockProvider(t)
 		autoscaler := Autoscaler{
-			agents: []*woodpecker.Agent{
+			agents: []*crow.Agent{
 				{
 					ID:          1,
 					Name:        "active agent",
@@ -306,7 +306,7 @@ func Test_cleanupStaleAgents(t *testing.T) {
 
 		client.On("AgentTasksList", int64(2)).Return(nil, nil)
 		client.On("AgentDelete", int64(2)).Return(nil)
-		provider.On("RemoveAgent", mock.Anything, mock.MatchedBy(func(agent *woodpecker.Agent) bool {
+		provider.On("RemoveAgent", mock.Anything, mock.MatchedBy(func(agent *crow.Agent) bool {
 			return agent.ID == 2
 		})).Return(nil)
 
@@ -319,7 +319,7 @@ func Test_cleanupStaleAgents(t *testing.T) {
 		client := mocks_server.NewMockClient(t)
 		provider := mocks_engine.NewMockProvider(t)
 		autoscaler := Autoscaler{
-			agents: []*woodpecker.Agent{
+			agents: []*crow.Agent{
 				{
 					ID:          1,
 					Name:        "active agent",
@@ -344,7 +344,7 @@ func Test_cleanupStaleAgents(t *testing.T) {
 
 		client.On("AgentTasksList", int64(2)).Return(nil, nil)
 		client.On("AgentDelete", int64(2)).Return(nil)
-		provider.On("RemoveAgent", mock.Anything, mock.MatchedBy(func(agent *woodpecker.Agent) bool {
+		provider.On("RemoveAgent", mock.Anything, mock.MatchedBy(func(agent *crow.Agent) bool {
 			return agent.ID == 2
 		})).Return(nil)
 
@@ -363,11 +363,11 @@ func Test_isAgentIdle(t *testing.T) {
 			},
 		}
 
-		client.On("AgentTasksList", int64(1)).Return([]*woodpecker.Task{
+		client.On("AgentTasksList", int64(1)).Return([]*crow.Task{
 			{ID: "1"},
 		}, nil)
 
-		idle, err := autoscaler.isAgentIdle(&woodpecker.Agent{
+		idle, err := autoscaler.isAgentIdle(&crow.Agent{
 			ID:         1,
 			Name:       "pool-1-agent-1",
 			NoSchedule: false,
@@ -387,7 +387,7 @@ func Test_isAgentIdle(t *testing.T) {
 
 		client.On("AgentTasksList", int64(1)).Return(nil, nil)
 
-		idle, err := autoscaler.isAgentIdle(&woodpecker.Agent{
+		idle, err := autoscaler.isAgentIdle(&crow.Agent{
 			ID:         1,
 			Name:       "pool-1-agent-1",
 			NoSchedule: false,
@@ -408,7 +408,7 @@ func Test_isAgentIdle(t *testing.T) {
 
 		client.On("AgentTasksList", int64(1)).Return(nil, nil) // no tasks
 
-		idle, err := autoscaler.isAgentIdle(&woodpecker.Agent{
+		idle, err := autoscaler.isAgentIdle(&crow.Agent{
 			ID:         1,
 			Name:       "pool-1-agent-1",
 			NoSchedule: false,
@@ -425,7 +425,7 @@ func Test_drainAgents(t *testing.T) {
 		client := mocks_server.NewMockClient(t)
 		provider := mocks_engine.NewMockProvider(t)
 		autoscaler := Autoscaler{
-			agents: []*woodpecker.Agent{
+			agents: []*crow.Agent{
 				{ID: 1, Name: "pool-1-agent-1", NoSchedule: false, LastContact: time.Now().Add(-time.Minute * 2).Unix()},
 				{ID: 2, Name: "pool-1-agent-2", NoSchedule: true, LastContact: time.Now().Add(-time.Minute * 2).Unix()},
 				{ID: 3, Name: "pool-1-agent-3", NoSchedule: true, LastContact: time.Now().Add(-time.Minute * 2).Unix()},
@@ -438,7 +438,7 @@ func Test_drainAgents(t *testing.T) {
 			},
 		}
 
-		client.On("AgentUpdate", mock.MatchedBy(func(agent *woodpecker.Agent) bool {
+		client.On("AgentUpdate", mock.MatchedBy(func(agent *crow.Agent) bool {
 			return (agent.ID == 1 || agent.ID == 4) && agent.NoSchedule == true
 		})).Return(nil, nil)
 
@@ -453,7 +453,7 @@ func Test_drainAgents(t *testing.T) {
 		client := mocks_server.NewMockClient(t)
 		provider := mocks_engine.NewMockProvider(t)
 		autoscaler := Autoscaler{
-			agents: []*woodpecker.Agent{
+			agents: []*crow.Agent{
 				{ID: 1, Name: "pool-1-agent-1", NoSchedule: false, LastContact: 0},
 			},
 			provider: provider,
@@ -473,7 +473,7 @@ func Test_drainAgents(t *testing.T) {
 		client := mocks_server.NewMockClient(t)
 		provider := mocks_engine.NewMockProvider(t)
 		autoscaler := Autoscaler{
-			agents: []*woodpecker.Agent{
+			agents: []*crow.Agent{
 				{
 					ID:          1,
 					Name:        "pool-1-agent-1",
@@ -501,7 +501,7 @@ func Test_removeDrainedAgents(t *testing.T) {
 		client := mocks_server.NewMockClient(t)
 		provider := mocks_engine.NewMockProvider(t)
 		autoscaler := Autoscaler{
-			agents: []*woodpecker.Agent{
+			agents: []*crow.Agent{
 				{ID: 1, Name: "pool-1-agent-1", NoSchedule: false},
 				{ID: 2, Name: "pool-1-agent-2", NoSchedule: true},
 				{ID: 3, Name: "pool-1-agent-3", NoSchedule: false},
@@ -514,7 +514,7 @@ func Test_removeDrainedAgents(t *testing.T) {
 		}
 
 		client.On("AgentTasksList", int64(2)).Return(nil, nil)
-		provider.On("RemoveAgent", mock.Anything, mock.MatchedBy(func(agent *woodpecker.Agent) bool {
+		provider.On("RemoveAgent", mock.Anything, mock.MatchedBy(func(agent *crow.Agent) bool {
 			return agent.ID == 2
 		})).Return(nil)
 		client.On("AgentDelete", int64(2)).Return(nil)
@@ -528,7 +528,7 @@ func Test_removeDrainedAgents(t *testing.T) {
 		client := mocks_server.NewMockClient(t)
 		provider := mocks_engine.NewMockProvider(t)
 		autoscaler := Autoscaler{
-			agents: []*woodpecker.Agent{
+			agents: []*crow.Agent{
 				{ID: 1, Name: "pool-1-agent-1", NoSchedule: false},
 				{ID: 2, Name: "pool-1-agent-2", NoSchedule: true},
 				{ID: 3, Name: "pool-1-agent-3", NoSchedule: false},
@@ -537,7 +537,7 @@ func Test_removeDrainedAgents(t *testing.T) {
 			client:   client,
 		}
 
-		client.On("AgentTasksList", int64(2)).Return([]*woodpecker.Task{
+		client.On("AgentTasksList", int64(2)).Return([]*crow.Task{
 			{ID: "1"},
 		}, nil)
 

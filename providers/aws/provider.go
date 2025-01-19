@@ -18,7 +18,7 @@ import (
 	zerolog "github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v2"
 
-	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
+	crow "github.com/crowci/crow/v3/crow-go/crow"
 )
 
 type Provider struct {
@@ -64,7 +64,7 @@ func New(c *cli.Context, config *config.Config) (engine.Provider, error) {
 	return d, nil
 }
 
-func (p *Provider) DeployAgent(ctx context.Context, agent *woodpecker.Agent) error {
+func (p *Provider) DeployAgent(ctx context.Context, agent *crow.Agent) error {
 	// Generate base tags for instance
 	tags := []types.Tag{{
 		Key:   aws.String("Name"),
@@ -171,7 +171,7 @@ func (p *Provider) DeployAgent(ctx context.Context, agent *woodpecker.Agent) err
 	return fmt.Errorf("instance did not resolve in agent list: %s", *result.Instances[0].InstanceId)
 }
 
-func (p *Provider) getAgent(ctx context.Context, agent *woodpecker.Agent) (*types.Instance, error) {
+func (p *Provider) getAgent(ctx context.Context, agent *crow.Agent) (*types.Instance, error) {
 	instances, err := p.client.DescribeInstances(ctx, &ec2.DescribeInstancesInput{
 		Filters: []types.Filter{
 			{
@@ -192,7 +192,7 @@ func (p *Provider) getAgent(ctx context.Context, agent *woodpecker.Agent) (*type
 	return &instances.Reservations[0].Instances[0], nil
 }
 
-func (p *Provider) RemoveAgent(ctx context.Context, agent *woodpecker.Agent) error {
+func (p *Provider) RemoveAgent(ctx context.Context, agent *crow.Agent) error {
 	instance, err := p.getAgent(ctx, agent)
 	if err != nil {
 		return err

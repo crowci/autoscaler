@@ -1,8 +1,8 @@
 package engine
 
-import "go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
+import crow "github.com/crowci/crow/v3/crow-go/crow"
 
-func countTasksByLabel(jobs []woodpecker.Task, labelKey, labelValue string) int {
+func countTasksByLabel(jobs []crow.Task, labelKey, labelValue string) int {
 	count := 0
 	for _, job := range jobs {
 		val, exists := job.Labels[labelKey]

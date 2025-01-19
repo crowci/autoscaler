@@ -19,7 +19,7 @@ linters-settings:
     sections:
       - standard
       - default
-      - prefix(go.woodpecker-ci.org)
+      # - prefix(go.woodpecker-ci.org)
 
 linters:
   disable-all: true

@@ -12,11 +12,11 @@ import (
 	"golang.org/x/net/proxy"
 	"golang.org/x/oauth2"
 
-	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
+	crow "github.com/crowci/crow/v3/crow-go/crow"
 )
 
 type Client interface {
-	woodpecker.Client
+	crow.Client
 }
 
 // NewClient returns a new client from the CLI context.
@@ -31,10 +31,10 @@ func NewClient(c *cli.Context) (Client, error) {
 	serverURL = strings.TrimRight(serverURL, "/")
 
 	if len(serverURL) == 0 {
-		return nil, fmt.Errorf("please provide the woodpecker server address")
+		return nil, fmt.Errorf("please provide the crow server address")
 	}
 	if len(serverToken) == 0 {
-		return nil, fmt.Errorf("please provide a woodpecker access token")
+		return nil, fmt.Errorf("please provide a crow access token")
 	}
 
 	// attempt to find system CA certs
@@ -74,5 +74,5 @@ func NewClient(c *cli.Context) (Client, error) {
 		}
 	}
 
-	return woodpecker.NewClient(serverURL, client), nil
+	return crow.NewClient(serverURL, client), nil
 }

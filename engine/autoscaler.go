@@ -12,12 +12,12 @@ import (
 	"github.com/crowci/autoscaler/server"
 	"github.com/rs/zerolog/log"
 
-	"go.woodpecker-ci.org/woodpecker/v2/woodpecker-go/woodpecker"
+	crow "github.com/crowci/crow/v3/crow-go/crow"
 )
 
 type Autoscaler struct {
 	client   server.Client
-	agents   []*woodpecker.Agent
+	agents   []*crow.Agent
 	config   *config.Config
 	provider Provider
 }
@@ -34,7 +34,7 @@ func NewAutoscaler(provider Provider, client server.Client, config *config.Confi
 }
 
 func (a *Autoscaler) loadAgents(_ context.Context) error {
-	a.agents = []*woodpecker.Agent{}
+	a.agents = []*crow.Agent{}
 
 	agents, err := a.client.AgentList()
 	if err != nil {
@@ -51,8 +51,8 @@ func (a *Autoscaler) loadAgents(_ context.Context) error {
 	return nil
 }
 
-func (a *Autoscaler) getPoolAgents(excludeNoSchedule bool) []*woodpecker.Agent {
-	agents := make([]*woodpecker.Agent, 0)
+func (a *Autoscaler) getPoolAgents(excludeNoSchedule bool) []*crow.Agent {
+	agents := make([]*crow.Agent, 0)
 	for _, agent := range a.agents {
 		if excludeNoSchedule && agent.NoSchedule {
 			continue
@@ -84,7 +84,7 @@ func (a *Autoscaler) createAgents(ctx context.Context, amount int) error {
 
 	// create new agents
 	for i := 0; i < amount-reactivatedAgents; i++ {
-		agent, err := a.client.AgentCreate(&woodpecker.Agent{
+		agent, err := a.client.AgentCreate(&crow.Agent{
 			Name: fmt.Sprintf("pool-%s-agent-%s", a.config.PoolID, RandomString(suffixLength)),
 		})
 		if err != nil {
@@ -135,7 +135,7 @@ func (a *Autoscaler) drainAgents(_ context.Context, amount int) error {
 	return nil
 }
 
-func (a *Autoscaler) isAgentIdle(agent *woodpecker.Agent) (bool, error) {
+func (a *Autoscaler) isAgentIdle(agent *crow.Agent) (bool, error) {
 	tasks, err := a.client.AgentTasksList(agent.ID)
 	if err != nil {
 		return false, fmt.Errorf("client.AgentTasksList: %w", err)
@@ -154,7 +154,7 @@ func (a *Autoscaler) isAgentIdle(agent *woodpecker.Agent) (bool, error) {
 	return true, nil
 }
 
-func (a *Autoscaler) removeAgent(ctx context.Context, agent *woodpecker.Agent, reason string) error {
+func (a *Autoscaler) removeAgent(ctx context.Context, agent *crow.Agent, reason string) error {
 	isIdle, err := a.isAgentIdle(agent)
 	if err != nil {
 		return err
@@ -176,7 +176,7 @@ func (a *Autoscaler) removeAgent(ctx context.Context, agent *woodpecker.Agent, r
 		return fmt.Errorf("client.AgentDelete: %w", err)
 	}
 
-	filteredAgents := make([]*woodpecker.Agent, 0)
+	filteredAgents := make([]*crow.Agent, 0)
 	for _, a := range a.agents {
 		if a.ID != agent.ID {
 			filteredAgents = append(filteredAgents, a)
@@ -203,7 +203,7 @@ func (a *Autoscaler) removeDrainedAgents(ctx context.Context) error {
 }
 
 func (a *Autoscaler) cleanupDanglingAgents(ctx context.Context) error {
-	woodpeckerAgents := a.getPoolAgents(false)
+	crowAgents := a.getPoolAgents(false)
 	providerAgentNames, err := a.provider.ListDeployedAgentNames(ctx)
 	if err != nil {
 		return err
@@ -212,7 +212,7 @@ func (a *Autoscaler) cleanupDanglingAgents(ctx context.Context) error {
 	// remove agents that are not in the woodpecker agent list anymore
 	for _, agentName := range providerAgentNames {
 		found := false
-		for _, agent := range woodpeckerAgents {
+		for _, agent := range crowAgents {
 			if agent.Name == agentName {
 				found = true
 				break
@@ -220,8 +220,8 @@ func (a *Autoscaler) cleanupDanglingAgents(ctx context.Context) error {
 		}
 
 		if !found {
-			log.Info().Str("agent", agentName).Str("reason", "not found on woodpecker").Msg("remove agent")
-			if err := a.provider.RemoveAgent(ctx, &woodpecker.Agent{Name: agentName}); err != nil {
+			log.Info().Str("agent", agentName).Str("reason", "not found on Crow server").Msg("removing agent")
+			if err := a.provider.RemoveAgent(ctx, &crow.Agent{Name: agentName}); err != nil {
 				return fmt.Errorf("provider.RemoveAgent: %w", err)
 			}
 
@@ -237,7 +237,7 @@ func (a *Autoscaler) cleanupDanglingAgents(ctx context.Context) error {
 	}
 
 	// remove agents that do not exist on the provider anymore
-	for _, agent := range woodpeckerAgents {
+	for _, agent := range crowAgents {
 		found := false
 		for _, agentName := range providerAgentNames {
 			if agent.Name == agentName {
@@ -252,14 +252,14 @@ func (a *Autoscaler) cleanupDanglingAgents(ctx context.Context) error {
 				return fmt.Errorf("client.AgentDelete: %w", err)
 			}
 
-			// remove agent from woodpeckerAgents
-			_woodpeckerAgents := make([]*woodpecker.Agent, 0)
+			// remove agent from crowAgents
+			_crowAgents := make([]*crow.Agent, 0)
 			for _, a := range a.agents {
 				if a.Name != agent.Name {
-					woodpeckerAgents = append(woodpeckerAgents, a)
+					crowAgents = append(crowAgents, a)
 				}
 			}
-			a.agents = _woodpeckerAgents
+			a.agents = _crowAgents
 		}
 	}
 
@@ -365,7 +365,7 @@ func (a *Autoscaler) Reconcile(ctx context.Context) error {
 		}
 	}
 
-	// cleanup agents that are only present at the provider or woodpecker
+	// cleanup agents that are only present at the provider or crow
 	if err := a.cleanupDanglingAgents(ctx); err != nil {
 		return fmt.Errorf("cleaning up dangling agents failed: %w", err)
 	}
